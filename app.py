@@ -50,11 +50,11 @@ def login(message=None):
                     '''
             else:
                 print ("Login failed")
-                    return
-                    '''
-                        <h1 id=result>
-                        <p>Incorrect</p>
-                    '''
+                return
+                '''
+                    <h1 id=result>
+                    <p>Incorrect</p>
+                '''
     if message==True:
         return '''
         <h1 id='success'>
