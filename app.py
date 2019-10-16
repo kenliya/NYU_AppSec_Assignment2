@@ -33,15 +33,28 @@ def login(message=None):
         phone = request.form.get('2fa')
         print (username, password, phone)
         if username in credential_dictionary:
-            if password == credential_dictionary[username][0] and phone == credential_dictionary[username][1]:
-                print ("Login successful")
-                return '''
-                    <p>Login Successful</p>
-                '''
+            if password == credential_dictionary[username][0]:
+                if phone == credential_dictionary[username][1]:
+                    print ("Login successful")
+                    result = "success"
+                    return '''
+                        <h1 id=result>
+                        <p>Login Successful</p>
+                    '''
+                else :
+                    print ("Login failed")
+                    return
+                    '''
+                        <h1 id=result>
+                        <p>two-factor failure</p>
+                    '''
             else:
                 print ("Login failed")
-        else:
-            print ("Login failed")
+                    return
+                    '''
+                        <h1 id=result>
+                        <p>Incorrect</p>
+                    '''
     if message==True:
         return '''
         <h1 id='success'>
@@ -113,7 +126,8 @@ def spell_check():
     form = UploadForm(request.form)
     if request.method == 'POST' and form.validate():
         #run spell_check C code
-        return 0
+        file = 
+        return 
     return render_template('spell_check.html', form=form)
     
  
