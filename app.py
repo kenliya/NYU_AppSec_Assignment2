@@ -38,22 +38,25 @@ def login(message=None):
                     print ("Login successful")
                     result = "success"
                     return '''
-                        <h1 id=result>
-                        <p>Login Successful</p>
+                        <form action = "" method = "post">
+                            <p>Login success<id = result></p>
+                        </form>
                     '''
                 else :
                     print ("Login failed")
                     return
                     '''
-                        <h1 id=result>
-                        <p>two-factor failure</p>
+                        <form action = "" method = "post">
+                            <p>two-factor failure<id = result></p>
+                        </form>
                     '''
             else:
                 print ("Login failed")
                 return
                 '''
-                    <h1 id=result>
-                    <p>Incorrect</p>
+                    <form action = "" method = "post">
+                        <p>Incorrect<id = result></p>
+                    </form>
                 '''
     if message==True:
         return '''
@@ -68,7 +71,6 @@ def login(message=None):
         '''
     else:
         return '''
-        
         <form action = "" method = "post">
             <p>UserName<input id = uname type = text name = uname></p>
             <p>Password<input id = pword type = password name = pword></p>
