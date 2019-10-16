@@ -126,7 +126,7 @@ def spell_check():
     form = UploadForm(request.form)
     if request.method == 'POST' and form.validate():
         #run spell_check C code
-        file = 
+        #file = 
         return 
     return render_template('spell_check.html', form=form)
     
