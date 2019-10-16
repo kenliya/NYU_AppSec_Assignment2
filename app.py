@@ -36,7 +36,7 @@ def login(message=None):
             if password == credential_dictionary[username][0]:
                 if phone == credential_dictionary[username][1]:
                     print ("Login successful")
-                    result = "success"
+                    #result = "success"
                     return '''
                         <form action = "" method = "post">
                             <p>Login success<id = result></p>
