@@ -1,6 +1,6 @@
 import os
 from flask import Flask, abort, request, jsonify, g, url_for, redirect, escape, render_template, flash
-from wtforms import Form, BooleanField, StringField, PasswordField, validators, IntegerField, widgets
+from wtforms import Form, BooleanField, StringField, PasswordField, validators, IntegerField, widgets, FileField
 #from itsdangerous import (TimedJSONWebSignatureSerializer
 #                          as Serializer, BadSignature, SignatureExpired)
                           
@@ -16,6 +16,9 @@ class RegistrationForm(Form):
     #confirm = PasswordField('Repeat Password')
     #accept_tos = BooleanField('I accept the TOS', [validators.DataRequired()])
 
+class UploadForm(Form):
+    file = FileField()
+    
 def reformat_phone(form, field):
     field.data = field.data.replace('-', '')
     return True
@@ -102,6 +105,17 @@ def success():
     return '''
     <p id="success">Registered successfully</p>
     '''
+ 
+@app.route('/spell_check', methods=['GET', 'POST'])
+def spell_check():
+    #upload file
+    #POST check file
+    form = UploadForm(request.form)
+    if request.method == 'POST' and form.validate():
+        #run spell_check C code
+        return 0
+    return render_template('spell_check.html', form=form)
+    
  
 @app.route('/api/users', methods = ['POST'])
 def new_user():
