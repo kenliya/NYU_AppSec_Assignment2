@@ -39,7 +39,7 @@ def login(message=None):
                     #result = "success"
                     return '''
                         <form action = "" method = "post">
-                            <p>Login success<id = 'result'></p>
+                            <p id = 'result'Login success<id = 'result'></p>
                         </form>
                     '''
                 else :
@@ -47,7 +47,7 @@ def login(message=None):
                     return
                     '''
                         <form action = "" method = "post">
-                            <p>two-factor failure<id = 'result'></p>
+                            <p id = 'result'>two-factor failure<id = 'result'></p>
                         </form>
                     '''
             else:
@@ -55,7 +55,7 @@ def login(message=None):
                 return
                 '''
                     <form action = "" method = "post">
-                        <p>Incorrect<id = 'result'></p>
+                        <p id = 'result'>Incorrect<id = 'result'></p>
                     </form>
                 '''
     if message==True:
