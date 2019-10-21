@@ -16,6 +16,11 @@ class RegistrationForm(Form):
     #confirm = PasswordField('Repeat Password')
     #accept_tos = BooleanField('I accept the TOS', [validators.DataRequired()])
 
+class LoginForm(Form):
+    uname = StringField('Username', [validators.Length(min=4, max=25)], id='uname')
+    pword = PasswordField('New Password', [validators.DataRequired()], id='pword')
+    phone = StringField('Phone Number', [validators.Length(min=10, max=10), validators.DataRequired()], id='2fa')
+    
 class UploadForm(Form):
     file = FileField()
     
@@ -25,72 +30,37 @@ def reformat_phone(form, field):
 
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
-    success = " "
+    form = LoginForm(request.form)
     if request.method == 'POST':
         #session['username'] = request.form['username']
         #return redirect(url_for('index'))
-        username = request.form.get('uname')
-        password = request.form.get('pword')
-        phone = request.form.get('2fa')
+        #username = request.form.get('uname')
+        #password = request.form.get('pword')
+        #phone = request.form.get('2fa')
+        username = form.uname.data
+        password = form.pword.data
+        phone = form.phone.data
         print (username, password, phone)
         if username in credential_dictionary:
             if password == credential_dictionary[username][0]:
                 if phone == credential_dictionary[username][1]:
                     print ("Login successful")
                     result = "success"
-                    return '''
-                        <form action = "" method = "post">
-                            <li id = 'result' name='result' type='text'>{{result}}</li>
-                        </form>
-                    '''
+                    return render_template('spell_check.html', form=form) 
                 else :
-                    print ("Login failed")
-                    result = "two-factor failure"
-                    return
-                    '''
-                        <form action = "" method = "post">
-                            <li id = 'result' name='result' type='text'>{{result}}</li>
-                        </form>
-                    '''
+                    print ("Login failed - two-factor")
+                    result = "two-factor failed"
+                    return render_template('login.html', form=form) 
             else:
-                print ("Login failed")
+                print ("Login failed - incorrect password")
                 result = "Incorrect"
-                return
-                '''
-                    <form action = "" method = "post">
-                        <li id = 'result' name='result' type='text'>{{result}}</li>
-                    </form>
-                '''
+                return render_template('login.html', form=form) 
         else:
-            print ("Login failed")
+            print ("Login failed - incorrect username")
             result = "Incorrect"
-            return
-            '''
-                <form action = "" method = "post">
-                    <li id = 'result' name='result' type='text'>{{result}}</li>
-                </form>
-            '''
-   # if result=="success":
-   #     return '''
-   #     <h1 id='success'>
-   #     <form action = "" method = "post">
-   #         <p>UserName<input id = uname type = text name = uname></p>
-   #         <p>Password<input id = pword type = password name = pword></p>
-   #         <p>Phone<input id = 2fa type = text name = 2fa></p>
-   #         <p><input type = submit value = Login/></p>
-   #     </form>
-        
-    #    '''
+            return render_template('login.html', form=form) 
     else:
-        return '''
-        <form action = "" method = "post">
-            <p>UserName<input id = uname type = text name = uname></p>
-            <p>Password<input id = pword type = password name = pword></p>
-            <p>Phone<input id = 2fa type = text name = 2fa></p>
-            <p><input type = submit value = Login/></p>
-        </form>
-        
-        '''
+        return render_template('login.html', form=form) 
 
 #@app.route('/register', methods = ['GET','POST'])
 #def register():
