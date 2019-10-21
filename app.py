@@ -61,6 +61,15 @@ def login():
                         <li id = 'result' name='result' type='text'>{{result}}</li>
                     </form>
                 '''
+        else:
+            print ("Login failed")
+            result = "Incorrect"
+            return
+            '''
+                <form action = "" method = "post">
+                    <li id = 'result' name='result' type='text'>{{result}}</li>
+                </form>
+            '''
    # if result=="success":
    #     return '''
    #     <h1 id='success'>
