@@ -40,7 +40,7 @@ def login():
                     result = "success"
                     return '''
                         <form action = "" method = "post">
-                            <p id = 'result'>Login success<id = 'result'></p>
+                            <li id = 'result' name='result' type='text'>{{result}}</li>
                         </form>
                     '''
                 else :
@@ -49,7 +49,7 @@ def login():
                     return
                     '''
                         <form action = "" method = "post">
-                            <p id = 'result'>two-factor failure<id = 'result'></p>
+                            <li id = 'result' name='result' type='text'>{{result}}</li>
                         </form>
                     '''
             else:
@@ -58,7 +58,7 @@ def login():
                 return
                 '''
                     <form action = "" method = "post">
-                        <p id = 'result'>Incorrect<id = 'result'></p>
+                        <li id = 'result' name='result' type='text'>{{result}}</li>
                     </form>
                 '''
    # if result=="success":
