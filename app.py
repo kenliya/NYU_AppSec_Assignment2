@@ -25,7 +25,7 @@ def reformat_phone(form, field):
 
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
-    success = None
+    success = " "
     if request.method == 'POST':
         #session['username'] = request.form['username']
         #return redirect(url_for('index'))
