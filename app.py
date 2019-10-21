@@ -24,7 +24,8 @@ def reformat_phone(form, field):
     return True
 
 @app.route('/login', methods = ['GET', 'POST'])
-def login(message=None):
+def login():
+    success = None
     if request.method == 'POST':
         #session['username'] = request.form['username']
         #return redirect(url_for('index'))
@@ -36,14 +37,15 @@ def login(message=None):
             if password == credential_dictionary[username][0]:
                 if phone == credential_dictionary[username][1]:
                     print ("Login successful")
-                    #result = "success"
+                    result = "success"
                     return '''
                         <form action = "" method = "post">
-                            <p id = 'result'Login success<id = 'result'></p>
+                            <p id = 'result'>Login success<id = 'result'></p>
                         </form>
                     '''
                 else :
                     print ("Login failed")
+                    result = "two-factor failure"
                     return
                     '''
                         <form action = "" method = "post">
@@ -52,13 +54,14 @@ def login(message=None):
                     '''
             else:
                 print ("Login failed")
+                result = "Incorrect"
                 return
                 '''
                     <form action = "" method = "post">
                         <p id = 'result'>Incorrect<id = 'result'></p>
                     </form>
                 '''
-    if message==True:
+    if result=="success":
         return '''
         <h1 id='success'>
         <form action = "" method = "post">
