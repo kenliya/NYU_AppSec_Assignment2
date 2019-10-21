@@ -81,16 +81,16 @@ def login():
    #     </form>
         
     #    '''
-    #else:
-    return '''
-    <form action = "" method = "post">
-        <p>UserName<input id = uname type = text name = uname></p>
-        <p>Password<input id = pword type = password name = pword></p>
-        <p>Phone<input id = 2fa type = text name = 2fa></p>
-        <p><input type = submit value = Login/></p>
-    </form>
-    
-    '''
+    else:
+        return '''
+        <form action = "" method = "post">
+            <p>UserName<input id = uname type = text name = uname></p>
+            <p>Password<input id = pword type = password name = pword></p>
+            <p>Phone<input id = 2fa type = text name = 2fa></p>
+            <p><input type = submit value = Login/></p>
+        </form>
+        
+        '''
 
 #@app.route('/register', methods = ['GET','POST'])
 #def register():
