@@ -87,7 +87,6 @@ def login():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm(request.form)
-    success = None
     if request.method == 'POST' and form.validate():
         #user = User(form.uname.data, form.pword.data,
                     #form.phone.data)
@@ -97,10 +96,10 @@ def register():
             flash('Thanks for registering')
             print (credential_dictionary[form.uname.data][0], credential_dictionary[form.uname.data][1])
             success = 'success'
-            return redirect(url_for('login'))
+            return render_template('register.html', form=form, success = success) 
         else:
             success = 'failure'
-            return redirect(url_for('register'))
+            return render_template('register.html', form=form, success = success) 
         #return redirect(url_for('login'))
     return render_template('register.html', form=form, success = success) 
  
