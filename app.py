@@ -1,9 +1,10 @@
 import os
+import subprocess
 from flask import Flask, abort, request, jsonify, g, url_for, redirect, escape, render_template, flash
 from wtforms import Form, BooleanField, StringField, PasswordField, validators, IntegerField, widgets, FileField
 #from itsdangerous import (TimedJSONWebSignatureSerializer
 #                          as Serializer, BadSignature, SignatureExpired)
-                          
+              
 app = Flask(__name__)
 SECRET_KEY = b'?\x03?w*\xd2\x84\xea\xc3\xc1\x8c\xe7\x80\x83\x9d\x8c=\xb1\x17\xe3Z\xf4|C'
 credential_dictionary = {}
@@ -22,7 +23,7 @@ class LoginForm(Form):
     phone = StringField('Phone Number', [validators.Length(min=10, max=10), validators.DataRequired()], id='2fa')
     
 class UploadForm(Form):
-    file = FileField()
+    inputtext = StringField('Text', [validators.DataRequired()], id='inputtext')
     
 def reformat_phone(form, field):
     field.data = field.data.replace('-', '')
@@ -114,10 +115,11 @@ def spell_check():
     #upload file
     #POST check file
     form = UploadForm(request.form)
+    misspelled = 0
     if request.method == 'POST' and form.validate():
-        #run spell_check C code
-        #file = 
-        return 
+        inputtext = form.inputtext.data
+        subprocess.check_output("./a.out", inputtext, "wordlist.txt")
+        return render_template('spell_check.html', form=form, misspelled=misspelled)
     return render_template('spell_check.html', form=form)
     
  

@@ -1,7 +1,10 @@
 {% from "_formtemplates.html" import render_field %}
 <form method=post>
   <dl>
-    {{ render_field(form.file) }}
+    {{ render_field(form.inputtext) }}
   </dl>
-  <p><input type=submit value=Upload>
+  <p><input type=submit value=Submit>
 </form>
+{% if misspelled %}
+<p id="misspelled">{{ misspelled }}</p>
+{% endif %}
