@@ -100,7 +100,7 @@ def register():
             success = 'failure'
             return render_template('register.html', form=form, success = success) 
         #return redirect(url_for('login'))
-    return render_template('register.html', form=form, success = success) 
+    return render_template('register.html', form=form) 
  
 @app.route('/success')
 def success():
