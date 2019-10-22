@@ -47,7 +47,7 @@ def login():
                 if phone == credential_dictionary[username][1]:
                     print ("Login successful")
                     result = "success"
-                    return render_template('spell_check.html', form=form, result = result) 
+                    return render_template('spell_check.html', form=form, result = result, credential=[username,password,phone]) 
                 else :
                     print ("Login failed - two-factor")
                     result = "two-factor failed"
@@ -90,7 +90,6 @@ def register():
     if request.method == 'POST' and form.validate():
         #user = User(form.uname.data, form.pword.data,
                     #form.phone.data)
-        #db_session.add(user)
         if form.uname.data not in credential_dictionary:
             credential_dictionary[form.uname.data] = [form.pword.data, form.phone.data]
             flash('Thanks for registering')
@@ -110,15 +109,19 @@ def success():
     '''
  
 @app.route('/spell_check', methods=['GET', 'POST'])
-def spell_check():
+def spell_check(result):
     #upload file
     #POST check file
+    if result != 'success':
+        return render_template('login.html', form=form, result=result)
     form = UploadForm(request.form)
-    misspelled = 0
     if request.method == 'POST' and form.validate():
         inputtext = form.inputtext.data
-        subprocess.check_output("./a.out", inputtext, "wordlist.txt")
-        return render_template('spell_check.html', form=form, misspelled=misspelled)
+        
+        with open("test.txt","w+") as fo:
+            fo.write("%s" % inputtext)
+        mispelled = subprocess.check_output("./a.out", "test.txt", "wordlist.txt")
+        return render_template('spell_check.html', form=form, mispelled=mispelled, textout=inputtext)
     return render_template('spell_check.html', form=form)
     
  
