@@ -46,21 +46,22 @@ def login():
                 if phone == credential_dictionary[username][1]:
                     print ("Login successful")
                     result = "success"
-                    return render_template('spell_check.html', form=form) 
+                    return render_template('spell_check.html', form=form, result = result) 
                 else :
                     print ("Login failed - two-factor")
                     result = "two-factor failed"
-                    return render_template('login.html', form=form) 
+                    return render_template('login.html', form=form, result = result) 
             else:
                 print ("Login failed - incorrect password")
                 result = "Incorrect"
-                return render_template('login.html', form=form) 
+                return render_template('login.html', form=form, result = result) 
         else:
             print ("Login failed - incorrect username")
             result = "Incorrect"
-            return render_template('login.html', form=form) 
+            return render_template('login.html', form=form, result = result) 
     else:
-        return render_template('login.html', form=form) 
+        result = "Incorrect"
+        return render_template('login.html', form=form, result = result) 
 
 #@app.route('/register', methods = ['GET','POST'])
 #def register():
@@ -90,11 +91,15 @@ def register():
         #user = User(form.uname.data, form.pword.data,
                     #form.phone.data)
         #db_session.add(user)
-        credential_dictionary[form.uname.data] = [form.pword.data, form.phone.data]
-        flash('Thanks for registering')
-        print (credential_dictionary[form.uname.data][0], credential_dictionary[form.uname.data][1])
-        success = 'success'
-        return redirect(url_for('register', success=success))
+        if form.uname.data not in credential_dictionary:
+            credential_dictionary[form.uname.data] = [form.pword.data, form.phone.data]
+            flash('Thanks for registering')
+            print (credential_dictionary[form.uname.data][0], credential_dictionary[form.uname.data][1])
+            success = 'success'
+            return redirect(url_for('login'))
+        else:
+            success = 'failure'
+            return redirect(url_for('register'))
         #return redirect(url_for('login'))
     return render_template('register.html', form=form, success = success) 
  
