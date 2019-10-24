@@ -13,7 +13,8 @@ current_session = None
 class RegistrationForm(Form):
     uname = StringField('Username', [validators.Length(min=4, max=25)], id='uname')
     pword = PasswordField('New Password', [validators.DataRequired()], id='pword')
-    phone = StringField('Phone Number', [validators.Length(min=10, max=10), validators.DataRequired()], id='2fa')
+    #phone = StringField('Phone Number', [validators.Length(min=10, max=10), validators.DataRequired()], id='2fa')
+    phone = StringField('Phone Number', [validators.DataRequired()], id='2fa')
     #phone = IntegerField('Phone', [validators.NumberRange(min=0, max=10), validators.DataRequired()], id='2fa', widget = widgets.Input(input_type="tel"))
     #confirm = PasswordField('Repeat Password')
     #accept_tos = BooleanField('I accept the TOS', [validators.DataRequired()])
