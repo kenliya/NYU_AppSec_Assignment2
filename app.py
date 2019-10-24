@@ -8,6 +8,7 @@ from wtforms import Form, BooleanField, StringField, PasswordField, validators, 
 app = Flask(__name__)
 SECRET_KEY = b'?\x03?w*\xd2\x84\xea\xc3\xc1\x8c\xe7\x80\x83\x9d\x8c=\xb1\x17\xe3Z\xf4|C'
 credential_dictionary = {}
+current_session = None
 
 class RegistrationForm(Form):
     uname = StringField('Username', [validators.Length(min=4, max=25)], id='uname')
@@ -109,19 +110,19 @@ def success():
     '''
  
 @app.route('/spell_check', methods=['GET', 'POST'])
-def spell_check(result):
+def spell_check():
     #upload file
     #POST check file
-    if result != 'success':
-        return render_template('login.html', form=form, result=result)
+    #if result != 'success':
+    #    return render_template('login.html', form=form, result=result)
     form = UploadForm(request.form)
     if request.method == 'POST' and form.validate():
-        inputtext = form.inputtext.data
-        
+        inputtext = form.inputtext.data   
         with open("test.txt","w+") as fo:
             fo.write("%s" % inputtext)
-        mispelled = subprocess.check_output("./a.out", "test.txt", "wordlist.txt")
-        return render_template('spell_check.html', form=form, mispelled=mispelled, textout=inputtext)
+        proc = subprocess.run(["./a.out", "test.txt", "wordlist.txt"], capture_output = True, universal_newlines = True)
+        misspelled = proc.stdout
+        return render_template('spell_check.html', form=form, misspelled=misspelled, textout=inputtext)
     return render_template('spell_check.html', form=form)
     
  
