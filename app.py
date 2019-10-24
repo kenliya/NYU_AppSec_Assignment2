@@ -49,7 +49,8 @@ def login():
                 if phone == credential_dictionary[username][1]:
                     print ("Login successful")
                     result = "success"
-                    return render_template('spell_check.html', form=form, result = result, credential=[username,password,phone]) 
+                    #return render_template('spell_check.html', form=form, result = result, credential=[username,password,phone]) 
+                    return render_template('spell_check.html', form=form, result = result)
                 else :
                     print ("Login failed - two-factor")
                     result = "two-factor failed"
