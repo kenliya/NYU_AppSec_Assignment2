@@ -50,7 +50,7 @@ def login():
                     print ("Login successful")
                     result = "success"
                     #return render_template('spell_check.html', form=form, result = result, credential=[username,password,phone]) 
-                    return render_template('spell_check.html', form=form, result = result)
+                    return render_template('spell_check.html', form=form)  
                 else :
                     print ("Login failed - two-factor")
                     result = "two-factor failed"
