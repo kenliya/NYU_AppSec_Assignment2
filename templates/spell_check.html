@@ -5,6 +5,9 @@
   </dl>
   <p><input type=submit value=Submit>
 </form>
+{% if inputtext %}
+<p id='textout'> {{ inputtext }}</p>
+{% endif %}
 {% if misspelled %}
 <p id="misspelled">{{ misspelled }}</p>
 {% endif %}
