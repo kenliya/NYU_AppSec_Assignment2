@@ -65,26 +65,6 @@ def login():
         result = "Incorrect"
         return render_template('login.html', form=form, result = result) 
 
-#@app.route('/register', methods = ['GET','POST'])
-#def register():
-#    if request.method == 'POST':
-#        username = request.form.get("uname")
-#        password = request.form.get("pword")
-#        phone = request.form.get("phone")
-#        #print("username: ", username, "\n")
-#        #print("password: ", password, "\n")
-#        #with open("test.txt","w+") as fo:
-#        #    fo.write("username: %s\r\n" % username)
-#        #    fo.write("password: %s\r\n" % password)    
-#    return '''
-#   <form method = "POST">
-#      <p>UserName<input id = uname type = text name = uname></p>
-#      <p>Password<input id = pword type = password name = pword></p>
-#      <p>Password<input id = pword type = password name = pword></p>
-#      <p><input type = submit value = Login></p>
-#   </form>
-#    '''
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm(request.form)
@@ -101,13 +81,15 @@ def register():
             success = 'failure'
             return render_template('register.html', form=form, success = success) 
         #return redirect(url_for('login'))
+        success = 'failure'
+        return render_template('register.html', form=form, success = success)
     return render_template('register.html', form=form) 
  
-@app.route('/success')
-def success():
-    return '''
-    <p id="success">Registered successfully</p>
-    '''
+#@app.route('/success')
+#def success():
+#    return '''
+#    <p id="success">Registered successfully</p>
+#    '''
  
 @app.route('/spell_check', methods=['GET', 'POST'])
 def spell_check():
