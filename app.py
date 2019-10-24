@@ -74,7 +74,7 @@ def register():
                     #form.phone.data)
         if form.uname.data not in credential_dictionary:
             credential_dictionary[form.uname.data] = [form.pword.data, form.phone.data]
-            flash('Thanks for registering')
+            #flash('Thanks for registering')
             print (credential_dictionary[form.uname.data][0], credential_dictionary[form.uname.data][1])
             success = 'success'
             return render_template('register.html', form=form, success = success) 
