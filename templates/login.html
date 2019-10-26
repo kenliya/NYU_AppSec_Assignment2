@@ -6,6 +6,7 @@
     {{ render_field(form.phone) }}
   </dl>
   <p><input type=submit value=Login>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 </form>
 {% if result %}
 <p id="result">{{ result }}</p>

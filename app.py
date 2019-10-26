@@ -1,18 +1,20 @@
 import os
 import subprocess
-from flask import Flask, abort, request, jsonify, g, url_for, redirect, escape, render_template, flash
+from flask import Flask, abort, request, jsonify, g, url_for, redirect, escape, render_template, flash, session
 from wtforms import Form, BooleanField, StringField, PasswordField, validators, IntegerField, widgets, FileField
 from flask_wtf.csrf import CSRFProtect
+from flask_wtf import FlaskForm
 #from itsdangerous import (TimedJSONWebSignatureSerializer
 #                          as Serializer, BadSignature, SignatureExpired)
               
 app = Flask(__name__)
 csrf = CSRFProtect(app)
 SECRET_KEY = b'?\x03?w*\xd2\x84\xea\xc3\xc1\x8c\xe7\x80\x83\x9d\x8c=\xb1\x17\xe3Z\xf4|C'
+app.config['SECRET_KEY'] = SECRET_KEY
 credential_dictionary = {}
 current_session = None
 
-class RegistrationForm(Form):
+class RegistrationForm(FlaskForm):  
     uname = StringField('Username', [validators.Length(min=4, max=25)], id='uname')
     pword = PasswordField('New Password', [validators.DataRequired()], id='pword')
     #phone = StringField('Phone Number', [validators.Length(min=10, max=10), validators.DataRequired()], id='2fa')
@@ -21,12 +23,12 @@ class RegistrationForm(Form):
     #confirm = PasswordField('Repeat Password')
     #accept_tos = BooleanField('I accept the TOS', [validators.DataRequired()])
 
-class LoginForm(Form):
+class LoginForm(FlaskForm):
     uname = StringField('Username', [validators.Length(min=4, max=25)], id='uname')
     pword = PasswordField('New Password', [validators.DataRequired()], id='pword')
     phone = StringField('Phone Number', [validators.Length(min=10, max=10), validators.DataRequired()], id='2fa')
     
-class UploadForm(Form):
+class UploadForm(FlaskForm):
     inputtext = StringField('Text', [validators.DataRequired()], id='inputtext')
     
 def reformat_phone(form, field):
@@ -113,19 +115,19 @@ def spell_check():
     return render_template('spell_check.html', form=form)
     
  
-@app.route('/api/users', methods = ['POST'])
-def new_user():
-    username = request.json.get('username')
-    password = request.json.get('password')
-    if username is None or password is None:
-        abort(400) # missing arguments
-    if User.query.filter_by(username = username).first() is not None:
-        abort(400) # existing user
-    user = User(username = username)
-    user.hash_password(password)
-    db.session.add(user)
-    db.session.commit()
-    return jsonify({ 'username': user.username }), 201, {'Location': url_for('get_user', id = user.id, _external = True)}
+#@app.route('/api/users', methods = ['POST'])
+#def new_user():
+#    username = request.json.get('username')
+#    password = request.json.get('password')
+#    if username is None or password is None:
+#        abort(400) # missing arguments
+#    if User.query.filter_by(username = username).first() is not None:
+#        abort(400) # existing user
+#    user = User(username = username)
+#    user.hash_password(password)
+#    db.session.add(user)
+#    db.session.commit()
+#    return jsonify({ 'username': user.username }), 201, {'Location': url_for('get_user', id = user.id, _external = True)}
 
 if __name__ == '__main__':
     app.secret_key = SECRET_KEY

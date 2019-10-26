@@ -4,6 +4,7 @@
     {{ render_field(form.inputtext) }}
   </dl>
   <p><input type=submit value=Submit>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 </form>
 {% if inputtext %}
 <p id='textout'> {{ inputtext }}</p>
