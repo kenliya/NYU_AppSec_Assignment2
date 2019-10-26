@@ -2,10 +2,12 @@ import os
 import subprocess
 from flask import Flask, abort, request, jsonify, g, url_for, redirect, escape, render_template, flash
 from wtforms import Form, BooleanField, StringField, PasswordField, validators, IntegerField, widgets, FileField
+from flask_wtf.csrf import CSRFProtect
 #from itsdangerous import (TimedJSONWebSignatureSerializer
 #                          as Serializer, BadSignature, SignatureExpired)
               
 app = Flask(__name__)
+csrf = CSRFProtect(app)
 SECRET_KEY = b'?\x03?w*\xd2\x84\xea\xc3\xc1\x8c\xe7\x80\x83\x9d\x8c=\xb1\x17\xe3Z\xf4|C'
 credential_dictionary = {}
 current_session = None
@@ -76,7 +78,8 @@ def register():
         if form.uname.data not in credential_dictionary:
             credential_dictionary[form.uname.data] = [form.pword.data, form.phone.data]
             #flash('Thanks for registering')
-            print (credential_dictionary[form.uname.data][0], credential_dictionary[form.uname.data][1])
+            #print (credential_dictionary[form.uname.data][0], credential_dictionary[form.uname.data][1])
+            print ("username: ", form.uname.data, "\npassword: ", credential_dictionary[form.uname.data][0], "\nphone: ", credential_dictionary[form.uname.data][1])
             success = 'success'
             return render_template('register.html', form=form, success = success) 
         else:
