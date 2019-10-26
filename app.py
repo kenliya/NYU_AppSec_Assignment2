@@ -1,6 +1,6 @@
 import os
 import subprocess
-from flask import Flask, abort, request, jsonify, g, url_for, redirect, escape, render_template, flash, session
+from flask import Flask, abort, request, jsonify, g, url_for, redirect, escape, render_template, flash, session, make_response
 from wtforms import Form, BooleanField, StringField, PasswordField, validators, IntegerField, widgets, FileField
 from flask_wtf.csrf import CSRFProtect
 from flask_wtf import FlaskForm
@@ -54,22 +54,33 @@ def login():
                     print ("Login successful")
                     result = "success"
                     #return render_template('spell_check.html', form=form, result = result, credential=[username,password,phone]) 
-                    return render_template('login.html', form=form, result = result)  
+                    response = make_response(render_template('login.html', form=form, result = result))
+                    response.headers['Content-Security-Policy'] = "default-src 'self'"
+                    return response  
                 else :
                     print ("Login failed - two-factor")
                     result = "two-factor failed"
-                    return render_template('login.html', form=form, result = result) 
+                    response = make_response(render_template('login.html', form=form, result = result))
+                    response.headers['Content-Security-Policy'] = "default-src 'self'"
+                    return response
             else:
                 print ("Login failed - incorrect password")
                 result = "Incorrect"
-                return render_template('login.html', form=form, result = result) 
+                response = make_response(render_template('login.html', form=form, result = result))
+                response.headers['Content-Security-Policy'] = "default-src 'self'"
+                return response 
         else:
             print ("Login failed - incorrect username")
             result = "Incorrect"
-            return render_template('login.html', form=form, result = result) 
+            response = make_response(render_template('login.html', form=form, result = result))
+            response.headers['Content-Security-Policy'] = "default-src 'self'"
+            return response
     else:
         result = "Incorrect"
-        return render_template('login.html', form=form, result = result) 
+        response = make_response(render_template('login.html', form=form, result = result))
+        response.headers['Content-Security-Policy'] = "default-src 'self'"
+        return response
+        #return render_template('login.html', form=form, result = result) 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -83,13 +94,19 @@ def register():
             #print (credential_dictionary[form.uname.data][0], credential_dictionary[form.uname.data][1])
             print ("username: ", form.uname.data, "\npassword: ", credential_dictionary[form.uname.data][0], "\nphone: ", credential_dictionary[form.uname.data][1])
             success = 'success'
-            return render_template('register.html', form=form, success = success) 
+            response = make_response(render_template('register.html', form=form, success = success))
+            response.headers['Content-Security-Policy'] = "default-src 'self'"
+            return response
         else:
             success = 'failure'
-            return render_template('register.html', form=form, success = success) 
+            response = make_response(render_template('register.html', form=form, success = success))
+            response.headers['Content-Security-Policy'] = "default-src 'self'"
+            return response
         #return redirect(url_for('login'))
         success = 'failure'
-        return render_template('register.html', form=form, success = success)
+        response = make_response(render_template('register.html', form=form, success = success))
+        response.headers['Content-Security-Policy'] = "default-src 'self'"
+        return response
     return render_template('register.html', form=form) 
  
 #@app.route('/success')
