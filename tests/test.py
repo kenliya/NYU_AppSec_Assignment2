@@ -22,7 +22,7 @@ class FlaskTestCase(unittest.TestCase):
     def test_register(self):
         test_data = {'uname': "test", 'pword':"1234567", 'phone': "1234567890"}
         response = self.app.post('/register', data=test_data)
-        self.assertIn(b'failure', response.data)
+        self.assertIn('failure', response.data)
     
     #def test_statuscode(self):
         
