@@ -4,8 +4,8 @@ from flask import Flask, abort, request, jsonify, g, url_for, redirect, escape, 
 from wtforms import Form, BooleanField, StringField, PasswordField, validators, IntegerField, widgets, FileField
 from flask_wtf.csrf import CSRFProtect
 from flask_wtf import FlaskForm
-#from itsdangerous import (TimedJSONWebSignatureSerializer
-#                          as Serializer, BadSignature, SignatureExpired)
+from itsdangerous import Signer
+import hashlib
               
 app = Flask(__name__)
 csrf = CSRFProtect(app)
@@ -13,6 +13,10 @@ SECRET_KEY = b'?\x03?w*\xd2\x84\xea\xc3\xc1\x8c\xe7\x80\x83\x9d\x8c=\xb1\x17\xe3
 app.config['SECRET_KEY'] = SECRET_KEY
 credential_dictionary = {}
 current_session = None
+session = {}
+s = Signer(SECRET_KEY)
+salt = "abc123"
+CSP = "default-src 'self'; script-src 'self'; frame-ancestors 'self'"
 
 class RegistrationForm(FlaskForm):  
     uname = StringField('Username', [validators.Length(min=4, max=25)], id='uname')
@@ -34,6 +38,14 @@ class UploadForm(FlaskForm):
 def reformat_phone(form, field):
     field.data = field.data.replace('-', '')
     return True
+    
+def secure_response(response):
+    response.headers['Content-Security-Policy'] = CSP
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    if 'ID' in session:
+        response.set_cookie('session_ID', value = session['ID'], domain = '127.0.0.1', secure=True, httponly=True)
 
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
@@ -46,39 +58,45 @@ def login():
         #phone = request.form.get('2fa')
         username = form.uname.data
         password = form.pword.data
+        password_hash = hashlib.sha256((password + salt).encode()).hexdigest()
         phone = form.phone.data
-        print (username, password, phone)
+        print (username, password_hash, phone)
         if username in credential_dictionary:
-            if password == credential_dictionary[username][0]:
+            if password_hash == credential_dictionary[username][0]:
                 if phone == credential_dictionary[username][1]:
                     print ("Login successful")
                     result = "success"
                     #return render_template('spell_check.html', form=form, result = result, credential=[username,password,phone]) 
+                    session['username'] = s.sign(username)
+                    current_session = s.sign(hashlib.sha256((username + salt).encode()).hexdigest())
+                    session['ID'] = current_session
+                    session['domain'] = request.headers['Host']
+                    print ("session ID: ", session['ID'])
                     response = make_response(render_template('login.html', form=form, result = result))
-                    response.headers['Content-Security-Policy'] = "default-src 'self'"
+                    secure_response(response)
                     return response  
                 else :
                     print ("Login failed - two-factor")
                     result = "two-factor failed"
                     response = make_response(render_template('login.html', form=form, result = result))
-                    response.headers['Content-Security-Policy'] = "default-src 'self'"
+                    secure_response(response)
                     return response
             else:
                 print ("Login failed - incorrect password")
                 result = "Incorrect"
                 response = make_response(render_template('login.html', form=form, result = result))
-                response.headers['Content-Security-Policy'] = "default-src 'self'"
+                secure_response(response)
                 return response 
         else:
             print ("Login failed - incorrect username")
             result = "Incorrect"
             response = make_response(render_template('login.html', form=form, result = result))
-            response.headers['Content-Security-Policy'] = "default-src 'self'"
+            secure_response(response)
             return response
     else:
         result = "Incorrect"
         response = make_response(render_template('login.html', form=form, result = result))
-        response.headers['Content-Security-Policy'] = "default-src 'self'"
+        secure_response(response)
         return response
         #return render_template('login.html', form=form, result = result) 
 
@@ -89,31 +107,44 @@ def register():
         #user = User(form.uname.data, form.pword.data,
                     #form.phone.data)
         if form.uname.data not in credential_dictionary:
-            credential_dictionary[form.uname.data] = [form.pword.data, form.phone.data]
             #flash('Thanks for registering')
+            username = form.uname.data.replace('<','').replace('>','')
+            password = form.pword.data
+            password_hash = hashlib.sha256((password + salt).encode()).hexdigest()
+            credential_dictionary[username] = [password_hash, form.phone.data]
             #print (credential_dictionary[form.uname.data][0], credential_dictionary[form.uname.data][1])
-            print ("username: ", form.uname.data, "\npassword: ", credential_dictionary[form.uname.data][0], "\nphone: ", credential_dictionary[form.uname.data][1])
+            print ("username: ", username, "\npassword: ", credential_dictionary[form.uname.data][0], "\nphone: ", credential_dictionary[form.uname.data][1])
             success = 'success'
             response = make_response(render_template('register.html', form=form, success = success))
-            response.headers['Content-Security-Policy'] = "default-src 'self'"
+            secure_response(response)
             return response
         else:
             success = 'failure'
             response = make_response(render_template('register.html', form=form, success = success))
-            response.headers['Content-Security-Policy'] = "default-src 'self'"
+            secure_response(response)
             return response
         #return redirect(url_for('login'))
         success = 'failure'
         response = make_response(render_template('register.html', form=form, success = success))
-        response.headers['Content-Security-Policy'] = "default-src 'self'"
+        secure_response(response)
         return response
-    return render_template('register.html', form=form) 
+    response = make_response(render_template('register.html', form=form))
+    secure_response(response)
+    return response
  
 #@app.route('/success')
 #def success():
 #    return '''
 #    <p id="success">Registered successfully</p>
 #    '''
+ 
+@app.route('/logout')
+def logout():
+    # remove the username from the session if it's there
+    session.pop('username', None)
+    session.pop('ID', None)
+    current_session = None
+    return redirect(url_for('login'))
  
 @app.route('/spell_check', methods=['GET', 'POST'])
 def spell_check():
@@ -122,15 +153,23 @@ def spell_check():
     #if result != 'success':
     #    return render_template('login.html', form=form, result=result)
     form = UploadForm(request.form)
+    if 'username' not in session:
+        return redirect(url_for('login'))
     if request.method == 'POST' and form.validate():
         inputtext = form.inputtext.data   
         with open("test.txt","w+") as fo:
             fo.write("%s" % inputtext)
         proc = subprocess.run(["./a.out", "test.txt", "wordlist.txt"], capture_output = True, universal_newlines = True)
         misspelled = proc.stdout
-        return render_template('spell_check.html', form=form, misspelled=misspelled, textout=inputtext)
+        response = make_response(render_template('spell_check.html', form=form, misspelled=misspelled, textout=inputtext))
+        secure_response(response)
+        return response
     return render_template('spell_check.html', form=form)
     
+#@app.route('/', methods = ['POST'])
+#def index():
+#    if 'username' in session:
+        
  
 #@app.route('/api/users', methods = ['POST'])
 #def new_user():
@@ -145,6 +184,13 @@ def spell_check():
 #    db.session.add(user)
 #    db.session.commit()
 #    return jsonify({ 'username': user.username }), 201, {'Location': url_for('get_user', id = user.id, _external = True)}
+
+@app.errorhandler(404)
+def not_found(e):
+    response = make_response(redirect(url_for('register')))
+    response.headers['Content-Security-Policy'] = CSP
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    return response
 
 if __name__ == '__main__':
     app.secret_key = SECRET_KEY
